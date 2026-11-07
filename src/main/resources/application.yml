@@ -1,3 +1,11 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 spring:
   application:
     name: springboot-data-jdbc
@@ -6,7 +14,44 @@ spring:
     username: app
     password: app123
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: springboot-data-jdbc
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
   sql:
     init:
       mode: always
       encoding: UTF-8
+      continue-on-error: false
+  jdbc:
+    template:
+      query-timeout: 30s
+      fetch-size: 100
+  data:
+    jdbc:
+      repositories:
+        enabled: true
+      dialect: MYSQL
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 200
+        one-indexed-parameters: false
+        page-parameter: page
+        size-parameter: size
+        serialization-mode: via-dto
+      sort:
+        sort-parameter: sort
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    # 需要看到每个绑定参数时再打开下一行
+    # org.springframework.jdbc.core.StatementCreatorUtils: TRACE
