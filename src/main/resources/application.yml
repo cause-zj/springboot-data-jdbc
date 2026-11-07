@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: springboot-data-jdbc
+  datasource:
+    url: "jdbc:mysql://localhost:3306/springboot_data_jdbc?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false"
+    username: app
+    password: app123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
