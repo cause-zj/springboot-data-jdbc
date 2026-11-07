@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:springboot_data_jdbc;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+      schema-locations: classpath:schema-h2.sql
+      data-locations: classpath:data-h2.sql
+  data:
+    jdbc:
+      dialect: H2
+
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: WARN
+    org.springframework.jdbc.datasource.init: WARN

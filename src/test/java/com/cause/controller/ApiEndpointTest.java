@@ -2,17 +2,21 @@ package com.cause.controller;
 
 import com.cause.domain.DemoItem;
 import com.cause.service.DemoItemService;
+import com.cause.service.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,5 +67,26 @@ class ApiEndpointTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("示例条目"))
                 .andExpect(jsonPath("$[0].createTime").value("2026-11-07T08:00:00"));
+    }
+
+    @Test
+    void createRejectsInvalidItem() throws Exception {
+        when(demoItemService.create(any())).thenThrow(new IllegalArgumentException("金额不能为空"));
+
+        mockMvc.perform(post("/api/demo-items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"x\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("bad_request"))
+                .andExpect(jsonPath("$.message").value("金额不能为空"));
+    }
+
+    @Test
+    void missingItemReturns404() throws Exception {
+        when(demoItemService.get(9L)).thenThrow(new NotFoundException("条目不存在: 9"));
+
+        mockMvc.perform(get("/api/demo-items/9"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("not_found"));
     }
 }
